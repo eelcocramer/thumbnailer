@@ -287,15 +287,15 @@ int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
         }
 
         // Save only every 10th frame
-        if (!(i++ % 10)) {
+        //if (!(i++ % 10)) {
             frames[size++] = next;
             next = NULL;
             if (size == MAX_FRAMES) {
                 goto end;
             }
-        } else {
-            av_frame_free(&next);
-        }
+        //} else {
+        //    av_frame_free(&next);
+        //}
     }
 
 end:
