@@ -301,7 +301,7 @@ int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
 end:
     if (size) {
         // Ignore all read errors, if at least one frame read
-        err = encode_frame(img, select_best_frame(frames, size), thumb_dims);
+        err = encode_frame(img, frames[0], thumb_dims);
     }
 
     for (int i = 0; i < size; i++) {
