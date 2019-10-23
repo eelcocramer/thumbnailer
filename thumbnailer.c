@@ -15,7 +15,7 @@
 
 #define HIST_SIZE 256
 #define HIST_CHANNELS 3
-#define MAX_FRAMES 10
+#define MAX_FRAMES 1
 
 // Compute sum-square deviation to estimate "closeness"
 static double compute_error(const unsigned hist[HIST_SIZE][HIST_CHANNELS],
