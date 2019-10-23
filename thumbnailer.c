@@ -273,42 +273,18 @@ int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
     AVCodecContext* avcc, const int stream, const struct Dims thumb_dims)
 {
     int err = 0;
-    int size = 0;
-    int i = 0;
-    AVFrame* frames[MAX_FRAMES] = { NULL };
-    AVFrame* next = NULL;
+    AVFrame* frame = NULL;
 
-    // Read up to 10 frames in 10 frame intervals
-    while (1) {
-        next = av_frame_alloc();
-        err = read_frame(avfc, avcc, next, stream);
-        if (err) {
-            goto end;
-        }
+    frame = av_frame_alloc();
+    err = read_frame(avfc, avcc, frame, stream);
 
-        // Save only every 10th frame
-        //if (!(i++ % 10)) {
-            frames[size++] = next;
-            next = NULL;
-            if (size == MAX_FRAMES) {
-                goto end;
-            }
-        //} else {
-        //    av_frame_free(&next);
-        //}
-    }
-
-end:
-    if (size) {
+    if (!err && frame) {
         // Ignore all read errors, if at least one frame read
-        err = encode_frame(img, frames[0], thumb_dims);
+        err = encode_frame(img, frame, thumb_dims);
     }
 
-    for (int i = 0; i < size; i++) {
-        av_frame_free(&frames[i]);
-    }
-    if (next) {
-        av_frame_free(&next);
+    if (frame) {
+        av_frame_free(&frame);
     }
 
     return err;
