@@ -14,8 +14,15 @@ func init() {
 }
 
 // Thumbnail generates a thumbnail from a representative frame of the media.
-// Images count as one frame media.
+// Images count as one frame media
 func (c *FFContext) Thumbnail(dims Dims) (thumb image.Image, err error) {
+	return c.ThumbnailWithOffset(1, dims)
+}
+
+// ThumbnailWithOffset generates a thumbnail from a representative frame of the media.
+// Images count as one frame media.
+// Setting the offset allows you to skip ahead and return the offset-th thumbnail
+func (c *FFContext) ThumbnailWithOffset(offset uint, dims Dims) (thumb image.Image, err error) {
 	ci, err := c.codecContext(FFVideo)
 	if err != nil {
 		return
@@ -27,7 +34,7 @@ func (c *FFContext) Thumbnail(dims Dims) (thumb image.Image, err error) {
 			C.free(unsafe.Pointer(img.data))
 		}
 	}()
-	ret := C.generate_thumbnail(&img, c.avFormatCtx, ci.ctx, ci.stream,
+	ret := C.generate_thumbnail(&img, c.avFormatCtx, ci.ctx, ci.stream, offset,
 		C.struct_Dims{
 			width:  C.ulong(dims.Width),
 			height: C.ulong(dims.Height),

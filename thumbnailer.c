@@ -270,13 +270,17 @@ end:
 }
 
 int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
-    AVCodecContext* avcc, const int stream, const struct Dims thumb_dims)
+    AVCodecContext* avcc, const int stream, const int offset, const struct Dims thumb_dims)
 {
     int err = 0;
     AVFrame* frame = NULL;
+    int i = 0;
 
     frame = av_frame_alloc();
-    err = read_frame(avfc, avcc, frame, stream);
+    while (i++ < offset) {
+        err = read_frame(avfc, avcc, frame, stream);
+        if (err) break;
+    }
 
     if (!err && frame) {
         // Ignore all read errors, if at least one frame read
