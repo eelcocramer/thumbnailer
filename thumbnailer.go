@@ -34,7 +34,7 @@ func (c *FFContext) ThumbnailWithOffset(offset uint, dims Dims) (thumb image.Ima
 			C.free(unsafe.Pointer(img.data))
 		}
 	}()
-	ret := C.generate_thumbnail(&img, c.avFormatCtx, ci.ctx, ci.stream, C.uint(offset),
+	ret := C.generate_thumbnail(&img, c.avFormatCtx, ci.ctx, ci.stream, C.ulong(offset),
 		C.struct_Dims{
 			width:  C.ulong(dims.Width),
 			height: C.ulong(dims.Height),

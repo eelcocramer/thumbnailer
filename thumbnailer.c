@@ -270,11 +270,11 @@ end:
 }
 
 int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
-    AVCodecContext* avcc, const int stream, const unsigned int offset, const struct Dims thumb_dims)
+    AVCodecContext* avcc, const int stream, const unsigned long offset, const struct Dims thumb_dims)
 {
     int err = 0;
     AVFrame* frame = NULL;
-    int i = 0;
+    unsigned long i = 0;
 
     frame = av_frame_alloc();
     while (i++ < offset) {

@@ -13,4 +13,4 @@ struct Dims {
 
 // Writes RGBA thumbnail buffer to img
 int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
-    AVCodecContext* avcc, const int stream, const unsigned int offset, const struct Dims thumb_dims);
+    AVCodecContext* avcc, const int stream, const unsigned long offset, const struct Dims thumb_dims);
