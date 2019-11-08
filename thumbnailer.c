@@ -224,9 +224,12 @@ static int encode_frame(
         = { .width = img->width * 4, .height = img->height * 4 };
     err = resample(&enlarged, frame);
     if (err) {
+
         return err;
     }
+
     downscale(img, &enlarged);
+
     free(enlarged.data);
     return err;
 }
@@ -277,7 +280,7 @@ int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
     unsigned long i = 0;
 
     frame = av_frame_alloc();
-    while (i++ < offset) {
+    for (i=0; i<offset; i++) {
         err = read_frame(avfc, avcc, frame, stream);
         if (err) break;
     }
