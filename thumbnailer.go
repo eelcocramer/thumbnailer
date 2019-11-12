@@ -4,6 +4,7 @@ package thumbnailer
 // #include <libavutil/log.h>
 import "C"
 import (
+	"fmt"
 	"image"
 	"io"
 	"unsafe"
@@ -16,15 +17,20 @@ func init() {
 // Thumbnail generates a thumbnail from a representative frame of the media.
 // Images count as one frame media
 func (c *FFContext) Thumbnail(dims Dims) (thumb image.Image, err error) {
-	return c.ThumbnailWithOffset(1, dims)
+	return c.ThumbnailForFrame(c.frame+1, dims)
 }
 
 // ThumbnailWithOffset generates a thumbnail from a representative frame of the media.
 // Images count as one frame media.
 // Setting the offset allows you to skip ahead and return the offset-th thumbnail
-func (c *FFContext) ThumbnailWithOffset(offset uint, dims Dims) (thumb image.Image, err error) {
+func (c *FFContext) ThumbnailForFrame(frame uint, dims Dims) (thumb image.Image, err error) {
 	ci, err := c.codecContext(FFVideo)
 	if err != nil {
+		return
+	}
+
+	if c.frame >= frame {
+		err = fmt.Errorf("Wanted frame (%d) should be larger then current frame (%d)", frame, c.frame)
 		return
 	}
 
@@ -34,7 +40,7 @@ func (c *FFContext) ThumbnailWithOffset(offset uint, dims Dims) (thumb image.Ima
 			C.free(unsafe.Pointer(img.data))
 		}
 	}()
-	ret := C.generate_thumbnail(&img, c.avFormatCtx, ci.ctx, ci.stream, C.ulong(offset),
+	ret := C.generate_thumbnail(&img, c.avFormatCtx, ci.ctx, ci.stream, C.ulong(c.frame), C.ulong(frame),
 		C.struct_Dims{
 			width:  C.ulong(dims.Width),
 			height: C.ulong(dims.Height),
@@ -45,6 +51,7 @@ func (c *FFContext) ThumbnailWithOffset(offset uint, dims Dims) (thumb image.Ima
 	case img.data == nil:
 		err = ErrGetFrame
 	default:
+		c.frame = frame
 		thumb = &image.RGBA{
 			Pix:    copyCBuffer(img),
 			Stride: 4 * int(img.width),

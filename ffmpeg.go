@@ -94,6 +94,7 @@ type FFContext struct {
 	avFormatCtx *C.struct_AVFormatContext
 	handlerKey  uintptr
 	codecs      map[FFMediaType]codecInfo
+	frame       uint
 }
 
 // NewFFContext constructs a new AVIOContext and AVFormatContext.
@@ -111,6 +112,7 @@ func newFFContextWithFormat(rs io.ReadSeeker, inputFormat *C.char,
 	this := &FFContext{
 		avFormatCtx: ctx,
 		codecs:      make(map[FFMediaType]codecInfo),
+		frame:       0,
 	}
 
 	this.handlerKey = uintptr(unsafe.Pointer(ctx))
